@@ -205,13 +205,14 @@ async def account_login(bot: Client, m: Message):
                     continue
             # =================================================================
 
-            # ========== NEW: PW logic (from new.py) with fixed double '?' ==========
+            # ========== FIXED: PW logic - No double encoding of ? and & ==========
             elif "d1d34p8vz63oiq" in url or "sec1.pw.live" in url:
                 if working_token.lower() == "no":
                     await m.reply_text(f"⚠️ Token required, skipping: {links[i][0]}")
                     continue
                 from urllib.parse import quote
-                encoded_url = quote(url, safe='')
+                # FIX: safe characters include : / ? & = so they don't get encoded
+                encoded_url = quote(url, safe=':/?&=')
                 url = f"https://anonymouspwplayer-ce3f42358cca.herokuapp.com/pw?url={encoded_url}&token={working_token}"
             # =========================================================================
 
@@ -315,4 +316,3 @@ if __name__ == "__main__":
     finally:
         # Cleanup
         loop.stop()
-                    
